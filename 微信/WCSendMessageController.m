@@ -33,8 +33,8 @@
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(newMsgCome:) name:kXMPPNewMsgNotifaction object:nil];
      [self refresh];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        _myHeadImage=[[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_Head]]]]retain];
-        _userHeadImage=[[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:_chatPerson.userHead]]]retain];
+//        _myHeadImage=[[UIImage imageWithData:[NSData dataWithContentsOfURL:FILE_BASE_URL([[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_Head]])]retain];
+//        _userHeadImage=[[UIImage imageWithData:[NSData dataWithContentsOfURL:FILE_BASE_URL([[NSUserDefaults standardUserDefaults]objectForKey:_chatPerson.userHead]])]retain];
         
         dispatch_async(dispatch_get_main_queue(), ^{
             [msgRecordTable reloadData];
@@ -120,25 +120,26 @@
     
 }
 - (IBAction)sendIt:(id)sender {
-    NSLog(@"消息发送成功");
+    
+   // NSLog(@"消息发送成功");
      NSString *message = messageText.text;
     
-    
-    if (message.length > 0) {
-        
+  
 
         
+    NSDictionary *messageDic=[NSDictionary dictionaryWithObjectsAndKeys:@"",@"file",[NSNumber numberWithInt:kWCMessageTypePlain],@"messageType", message,@"text", nil];
+    NSString *msgJson=[messageDic JSONRepresentation];
+    NSLog(@"发送json:%@",msgJson);
         //生成消息对象
         XMPPMessage *mes=[XMPPMessage messageWithType:@"chat" to:[XMPPJID jidWithUser:[NSString stringWithFormat:@"%@",_chatPerson.userId] domain:@"hcios.com" resource:@"ios"]];
-        [mes addChild:[DDXMLNode elementWithName:@"body" stringValue:message]];
+        [mes addChild:[DDXMLNode elementWithName:@"body" stringValue:msgJson]];
 
         //发送消息
         [[WCXMPPManager sharedInstance] sendMessage:mes];
         
-        
+        [messageText setText:nil];
    
-    }
-     [messageText setText:nil];
+
     
     
     
@@ -149,11 +150,47 @@
 -(void)sendImage:(UIImage *)aImage
 {
     NSLog(@"准备发送图片");
+    //先上传头像
+    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"uploadFile.do")];
+    [request setData:UIImageJPEGRepresentation(aImage, 0.1) withFileName:@"chatFile.jpg" andContentType:@"image/jpeg" forKey:@"file"];
+    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_API_KEY] forKey:@"apiKey"];
+    [request setTimeOutSeconds:1000];
+    
+    [MMProgressHUD showWithTitle:@"发送文件ing..." status:@"发送文件ing...，请耐心等待"];
+    [request setCompletionBlock:^{
+        NSDictionary *fileDic=[NSDictionary dictionary];
+        SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
+        
+        NSDictionary *rootDic=[paser objectWithString:request.responseString];
+        NSArray *files=[rootDic objectForKey:@"files"];
+        if ([files count]>0) {
+            fileDic=[files objectAtIndex:0];
+        }
+        [MMProgressHUD dismissWithSuccess:@"发送成功，干吧得" title:nil afterDelay:1.0f];
+        
+        NSDictionary *messageDic=[NSDictionary dictionaryWithObjectsAndKeys:fileDic,@"file",[NSNumber numberWithInt:kWCMessageTypeImage],@"messageType",@"",@"text", nil];
+        NSString *msgJson=[messageDic JSONRepresentation];
+       // NSLog(@"准备发送JSON:%@",msgJson);
+        //生成消息对象
+        XMPPMessage *mes=[XMPPMessage messageWithType:@"chat" to:[XMPPJID jidWithUser:[NSString stringWithFormat:@"%@",_chatPerson.userId] domain:@"hcios.com" resource:@"ios"]];
+        [mes addChild:[DDXMLNode elementWithName:@"body" stringValue:msgJson]];
+        
+        //发送消息
+        [[WCXMPPManager sharedInstance] sendMessage:mes];
+        
+        
+    }];
+    [request setFailedBlock:^{
+        [MMProgressHUD dismissWithError:@"发送失败" afterDelay:1.0f];
+        //[self continueRegister:fileId];
+    }];
+    [request startAsynchronous];
+
     
     
-    UIAlertView *av=[[UIAlertView alloc]initWithTitle:@"请稍后" message:@"文件正在传送中..." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
-    [av show];
-    [av release];
+//    UIAlertView *av=[[UIAlertView alloc]initWithTitle:@"请稍后" message:@"文件正在传送中..." delegate:nil cancelButtonTitle:@"ok" otherButtonTitles:nil];
+//    [av show];
+//    [av release];
     //服务器中转方式
 //    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"servlet/XMPPFileTransServlet")];
 //    [request setData:UIImageJPEGRepresentation(aImage, 0.1) withFileName:@"temp.jpg" andContentType:@"image/jpg" forKey:@"transFile"];
@@ -176,22 +213,22 @@
 //    [request setTimeOutSeconds:10000];
 //    [request startAsynchronous];
     
-    NSString *message = [Photo image2String:aImage];
-    
-    if (message.length > 0) {
-        
-        
-        
-        //生成消息对象
-        XMPPMessage *mes=[XMPPMessage messageWithType:@"chat" to:[XMPPJID jidWithUser:[NSString stringWithFormat:@"%@",_chatPerson.userId] domain:@"hcios.com" resource:@"ios"]];
-        [mes addChild:[DDXMLNode elementWithName:@"body" stringValue:[NSString stringWithFormat:@"[1]%@",message]]];
-        
-        //发送消息
-        [[WCXMPPManager sharedInstance] sendMessage:mes];
-        
-        
-        
-    }
+//    NSString *message = [Photo image2String:aImage];
+//    
+//    if (message.length > 0) {
+//        
+//        
+//        
+//        //生成消息对象
+//        XMPPMessage *mes=[XMPPMessage messageWithType:@"chat" to:[XMPPJID jidWithUser:[NSString stringWithFormat:@"%@",_chatPerson.userId] domain:@"hcios.com" resource:@"ios"]];
+//        [mes addChild:[DDXMLNode elementWithName:@"body" stringValue:[NSString stringWithFormat:@"[1]%@",message]]];
+//        
+//        //发送消息
+//        [[WCXMPPManager sharedInstance] sendMessage:mes];
+//        
+//        
+//        
+//    }
     
    // [[WCXMPPManager sharedInstance]sendFile:nil toJID:[XMPPJID jidWithUser:[NSString stringWithFormat:@"%@",_chatPerson.userId] domain:@"hcios.com" resource:@"ios"]];
 
@@ -233,19 +270,20 @@
    
     switch (style) {
         case kWCMessageCellStyleMe:
-            [cell setHeadImage:_myHeadImage];
+            [cell setHeadImage:FILE_BASE_URL([[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_Head]) tag:indexPath.row];
+            
             break;
         case kWCMessageCellStyleOther:
-            [cell setHeadImage:_userHeadImage];
+             [cell setHeadImage:FILE_BASE_URL(_chatPerson.userHead) tag:indexPath.row];
             break;
         case kWCMessageCellStyleMeWithImage:
         {
-             [cell setHeadImage:_myHeadImage];
+             [cell setHeadImage:FILE_BASE_URL([[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_Head]) tag:indexPath.row];
             
         }
             break;
         case kWCMessageCellStyleOtherWithImage:{
-            [cell setHeadImage:_userHeadImage];
+            [cell setHeadImage:FILE_BASE_URL(_chatPerson.userHead) tag:indexPath.row];
         }
             break;
         default:
@@ -254,7 +292,7 @@
    
     if ([msg.messageType intValue]==kWCMessageTypeImage) {
         style=style==kWCMessageCellStyleMe?kWCMessageCellStyleMeWithImage:kWCMessageCellStyleOtherWithImage;
-        
+        [cell setChatImage:FILE_BASE_URL(msg.messageContent) tag:indexPath.row*2];
         
 //        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
 //            UIImage *image=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:msg.messageContent]]];
@@ -267,7 +305,7 @@
         
         
         //UIImage *img=[Photo string2Image:msg.messageContent];
-        [cell setChatImage:[Photo string2Image:msg.messageContent ]];
+        //[cell setChatImage:[Photo string2Image:msg.messageContent ]];
       //  [msg setMessageContent:@""];
     }
     

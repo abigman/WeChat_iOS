@@ -103,19 +103,20 @@
     [formatter setDateFormat:@"a HH:mm"];
     
     [_timeLable setText:[formatter stringFromDate:aUnionObj.message.messageDate]];
-    [self setHeadImage:aUnionObj.user.userHead];
+    [_userHead setWebImage:FILE_BASE_URL(aUnionObj.user.userHead) placeHolder:[UIImage imageNamed:@"mb.png"] downloadFlag:_userHead.tag];
+    //[self setHeadImage:aUnionObj.user.userHead];
 }
--(void)setHeadImage:(NSString*)imageURL
-{
-    //[_userHead setImage:headImage];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
-        [_userHead setImage:[UIImage imageNamed:@"3.jpeg"]];
-        UIImage *img=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageURL]]];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [_userHead setImage:img];
-        });
-    });
-    
-}
+//-(void)setHeadImage:(NSString*)imageURL
+//{
+//    //[_userHead setImage:headImage];
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_HIGH, 0), ^{
+//        [_userHead setImage:[UIImage imageNamed:@"3.jpeg"]];
+//        UIImage *img=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:imageURL]]];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            [_userHead setImage:img];
+//        });
+//    });
+//    
+//}
 
 @end

@@ -28,6 +28,11 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    NSLog(@"hahaha-------%@",_thisUser.userNickname);
+    [userHead setWebImage:FILE_BASE_URL(_thisUser.userHead) placeHolder:[UIImage imageNamed:@"mb.png"] downloadFlag:10000];
+    [nickName.layer setCornerRadius:25];
+    [nickName.layer setMasksToBounds:YES];
+    [nickName setText:_thisUser.userNickname];
 }
 
 - (void)didReceiveMemoryWarning
@@ -44,23 +49,69 @@
 }
 
 - (IBAction)deleteFriend:(id)sender {
+    /* 添加好友接口 */
+    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"deleteFriend.do")];
+    
+    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_API_KEY ] forKey:@"apiKey"];
+    [request setPostValue:_thisUser.userId forKey:@"userId"];
+    [MMProgressHUD showWithTitle:@"删除好友" status:@"请求中..." ];
+    [request setCompletionBlock:^{
+        NSLog(@"response:%@",request.responseString);
+        SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
+        NSDictionary *rootDic=[paser objectWithString:request.responseString];
+        int resultCode=[[rootDic objectForKey:@"status"]intValue];
+        if (resultCode==1) {
+            [MMProgressHUD dismissWithSuccess:[rootDic objectForKey:@"msg"] title:@"删除好友成功" afterDelay:0.75f];
+            
+            
+            
+            
+        }else
+        {
+            [MMProgressHUD dismissWithError:[rootDic objectForKey:@"msg"] title:@"删除好友失败" afterDelay:0.75f];
+        }
+        
+    }];
+    
+    [request setFailedBlock:^{
+        [MMProgressHUD dismissWithError:@"链接服务器失败！" title:@"删除好友失败" afterDelay:0.75f];
+    }];
+    
+    [request startAsynchronous];
 }
 - (IBAction)addFirend:(id)sender {
-    UIAlertView *av=[[UIAlertView alloc]initWithTitle:@"加载中" message:@"添加好友中" delegate:self cancelButtonTitle:@"ok" otherButtonTitles: nil];
-    [av show];
-    [av release];
-    _thisUser.friendFlag=[NSNumber numberWithInt:1];
-    [WCUserObject updateUser:_thisUser];
     
-    //此API使用方式请查看www.hcios.com:8080/user/
-    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"servlet/AddFriendServlet")];
+    /* 添加好友接口 */
+    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"addFriend.do")];
     
-    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_ID ] forKey:@"userId"];
-    [request setPostValue:_thisUser.userId forKey:@"friendId"];
-    [request setDelegate:self];
-    [request setDidFinishSelector:@selector(requestSuccess:)];
-    [request setDidFailSelector:@selector(requestError:)];
+    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_API_KEY ] forKey:@"apiKey"];
+    [request setPostValue:_thisUser.userId forKey:@"userId"];
+    [MMProgressHUD showWithTitle:@"添加好友" status:@"请求中..." ];
+    [request setCompletionBlock:^{
+        NSLog(@"response:%@",request.responseString);
+        SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
+        NSDictionary *rootDic=[paser objectWithString:request.responseString];
+        int resultCode=[[rootDic objectForKey:@"status"]intValue];
+        if (resultCode==1) {
+            [MMProgressHUD dismissWithSuccess:[rootDic objectForKey:@"msg"] title:@"添加好友成功" afterDelay:0.75f];
+           
+            
+            
+            
+        }else
+        {
+            [MMProgressHUD dismissWithError:[rootDic objectForKey:@"msg"] title:@"添加好友失败" afterDelay:0.75f];
+        }
+        
+    }];
+    
+    [request setFailedBlock:^{
+        [MMProgressHUD dismissWithError:@"链接服务器失败！" title:@"添加好友失败" afterDelay:0.75f];
+    }];
+    
     [request startAsynchronous];
+    
+    
     [[WCXMPPManager sharedInstance]addSomeBody:_thisUser.userId];
     
 }
@@ -68,33 +119,5 @@
 
 
 
-#pragma mark   -------网络请求回调---------
-
--(void)requestSuccess:(ASIFormDataRequest*)request
-{
-    NSLog(@"response:%@",request.responseString);
-    SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
-    NSDictionary *rootDic=[paser objectWithString:request.responseString];
-    int resultCode=[[rootDic objectForKey:@"result_code"]intValue];
-    if (resultCode==1) {
-        UIAlertView *av=[[UIAlertView alloc]initWithTitle:@"成功" message:@"ok" delegate:nil cancelButtonTitle:@"ok" otherButtonTitles: nil];
-        [av show];
-        [av release];
-                
-    }else
-    {
-        UIAlertView *av=[[UIAlertView alloc]initWithTitle:@"失败" message:[rootDic objectForKey:@"msg"] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles: nil];
-        [av show];
-        [av release];
-        NSLog(@"查找好友失败,原因:%@",[rootDic objectForKey:@"msg"]);
-    }
-    
-}
-
-
--(void)requestError:(ASIFormDataRequest *)request
-{
-    NSLog(@"请求失败");
-}
 
 @end

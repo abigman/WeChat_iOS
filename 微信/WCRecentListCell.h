@@ -20,5 +20,6 @@
 }
 
 -(void)setUnionObject:(WCMessageUserUnionObject*)aUnionObj;
--(void)setHeadImage:(NSString*)imageURL;
+//-(void)setHeadImage:(NSString*)imageURL;
+@property (nonatomic,retain) UIImageView *userHead;
 @end

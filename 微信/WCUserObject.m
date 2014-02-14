@@ -28,7 +28,7 @@
 
     
         
-    NSString *insertStr=@"INSERT INTO 'wcUser' ('userId','userNickname','userDescription','userHead','friendFlag') VALUES (?,?,?,?,?)";
+    NSString *insertStr=@"INSERT INTO 'wcUser' ('userId','nickName','description','userHead','friendFlag') VALUES (?,?,?,?,?)";
     BOOL worked = [db executeUpdate:insertStr,aUser.userId,aUser.userNickname,aUser.userDescription,aUser.userHead,aUser.friendFlag];
    // FMDBQuickCheck(worked);
 
@@ -117,7 +117,7 @@
 +(WCUserObject*)userFromDictionary:(NSDictionary*)aDic
 {
     WCUserObject *user=[[[WCUserObject alloc]init]autorelease];
-    [user setUserId:[[aDic objectForKey:kUSER_ID]stringValue]];
+    [user setUserId:[aDic objectForKey:kUSER_ID]];
     [user setUserHead:[aDic objectForKey:kUSER_USERHEAD]];
     [user setUserDescription:[aDic objectForKey:kUSER_DESCRIPTION]];
     [user setUserNickname:[aDic objectForKey:kUSER_NICKNAME]];
@@ -133,7 +133,7 @@
 
 +(BOOL)checkTableCreatedInDb:(FMDatabase *)db
 {
-    NSString *createStr=@"CREATE  TABLE  IF NOT EXISTS 'wcUser' ('userId' VARCHAR PRIMARY KEY  NOT NULL  UNIQUE , 'userNickname' VARCHAR, 'userDescription' VARCHAR, 'userHead' VARCHAR,'friendFlag' INT)";
+    NSString *createStr=@"CREATE  TABLE  IF NOT EXISTS 'wcUser' ('userId' VARCHAR PRIMARY KEY  NOT NULL  UNIQUE , 'nickName' VARCHAR, 'description' VARCHAR, 'userHead' VARCHAR,'friendFlag' INT)";
     
     BOOL worked = [db executeUpdate:createStr];
     FMDBQuickCheck(worked);

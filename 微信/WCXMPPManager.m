@@ -102,16 +102,18 @@ static WCXMPPManager *sharedManager;
     [msg setMessageTo:strs[0]];
     //判断多媒体消息
     
-    if ([[body substringToIndex:3]isEqualToString:@"[1]"]) {
-        
+    NSDictionary *messageDic=[body JSONValue];
+    NSLog(@"发送消息中:%@",[messageDic objectForKey:@"text"]);
+
+    [msg setMessageType:[messageDic objectForKey:@"messageType"]];
     
-        [msg setMessageType:[NSNumber numberWithInt:kWCMessageTypeImage]];
-        body=[body substringFromIndex:3];
+    if (msg.messageType.intValue==kWCMessageTypePlain) {
+        [msg setMessageContent:[messageDic objectForKey:@"text"]];
     }else
-    [msg setMessageType:[NSNumber numberWithInt:kWCMessageTypePlain]];
+        [msg setMessageContent:[[messageDic objectForKey:@"file"]objectForKey:@"shortPath"]];
+
     
-    
-    [msg setMessageContent:body];
+    //[msg setMessageContent:body];
     [WCMessageObject save:msg];
     //发送全局通知
 //    [[NSNotificationCenter defaultCenter]postNotificationName:kXMPPNewMsgNotifaction object:msg ];
@@ -442,7 +444,7 @@ static WCXMPPManager *sharedManager;
         NSString *displayName = [[message from]bare];
         
         
-        [[[UIAlertView alloc]initWithTitle:@"收到新消息" message:body delegate:self cancelButtonTitle:@"ok" otherButtonTitles: nil]show];
+        [[[[UIAlertView alloc]initWithTitle:@"收到新消息" message:nil delegate:self cancelButtonTitle:@"ok" otherButtonTitles: nil]autorelease] show];
         
     
         //创建message对象
@@ -460,16 +462,13 @@ static WCXMPPManager *sharedManager;
     
     
        
-    if ([[body substringToIndex:3]isEqualToString:@"[1]"]) {
-        
-        
-        [msg setMessageType:[NSNumber numberWithInt:kWCMessageTypeImage]];
-        body=[body substringFromIndex:3];
+    NSDictionary *messageDic=[body JSONValue];
+    
+    [msg setMessageType:[messageDic objectForKey:@"messageType"]];
+    if (msg.messageType.intValue==kWCMessageTypePlain) {
+        [msg setMessageContent:[messageDic objectForKey:@"text"]];
     }else
-        [msg setMessageType:[NSNumber numberWithInt:kWCMessageTypePlain]];
-    
-    
-    [msg setMessageContent:body];
+        [msg setMessageContent:[[messageDic objectForKey:@"file"]objectForKey:@"shortPath"]];
     [WCMessageObject save:msg];
     
     

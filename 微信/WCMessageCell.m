@@ -36,9 +36,10 @@
         [self.contentView addSubview:_headMask];
         [self.contentView addSubview:_messageConent];
         [self.contentView addSubview:_chatImage];
-        [_chatImage setBackgroundColor:[UIColor redColor]];
+       // [_chatImage setBackgroundColor:[UIColor redColor]];
         [self setSelectionStyle:UITableViewCellSelectionStyleNone];
         [_headMask setImage:[[UIImage imageNamed:@"UserHeaderImageBox"]stretchableImageWithLeftCapWidth:10 topCapHeight:10]];
+        [self setBackgroundColor:[UIColor clearColor]];
     }
     return self;
 }
@@ -127,13 +128,15 @@
     [_messageConent setText:aMessage.messageContent];
    
 }
--(void)setHeadImage:(UIImage*)headImage
+-(void)setHeadImage:(NSURL*)headImage tag:(int)aTag
 {
-    [_userHead setImage:headImage];
+    [_userHead setTag:aTag];
+    [_userHead setWebImage:headImage placeHolder:Nil downloadFlag:aTag];
 }
--(void)setChatImage:(UIImage *)chatImage
+-(void)setChatImage:(NSURL *)chatImage tag:(int)aTag
 {
-    [_chatImage setImage:chatImage];
+    [_chatImage setTag:aTag];
+    [_chatImage setWebImage:chatImage placeHolder:Nil downloadFlag:aTag];
 }
 
 @end

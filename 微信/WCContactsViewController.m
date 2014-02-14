@@ -8,6 +8,7 @@
 
 #import "WCContactsViewController.h"
 #import "WCSendMessageController.h"
+#import "WCFriendCell.h"
 
 @interface WCContactsViewController ()
 
@@ -34,6 +35,7 @@
     UIBarButtonItem *barBtn=[[UIBarButtonItem alloc]initWithBarButtonSystemItem:UIBarButtonSystemItemRefresh target:self action:@selector(refresh:)];
     [self.navigationItem setRightBarButtonItem:barBtn];
     [barBtn release];
+     [_friendTable registerNib:[UINib nibWithNibName:@"WCFriendCell" bundle:nil] forCellReuseIdentifier:@"friendCell"];
     
 }
 
@@ -53,18 +55,58 @@
 
 -(void)getFriends
 {
-    UIAlertView *av=[[UIAlertView alloc]initWithTitle:@"加载中" message:@"刷新好友列表中，请稍候" delegate:self cancelButtonTitle:@"ok" otherButtonTitles: nil];
-    [av show];
-    [av release];
+    /* 搜索好友接口 */
+    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"getMyFriends.do")];
     
-    //此API使用方式请查看www.hcios.com:8080/user/findUser.html
-    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"servlet/GetFriendListServlet")];
+    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_API_KEY ] forKey:@"apiKey"];
+
+    [MMProgressHUD showWithTitle:@"获取我的好友" status:@"请求中..." ];
+    [request setCompletionBlock:^{
+        NSLog(@"response:%@",request.responseString);
+        SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
+        NSDictionary *rootDic=[paser objectWithString:request.responseString];
+        int resultCode=[[rootDic objectForKey:@"status"]intValue];
+        if (resultCode==1) {
+            [MMProgressHUD dismissWithSuccess:[rootDic objectForKey:@"msg"] title:@"获取成功" afterDelay:0.75f];
+            //保存账号信息
+            NSArray *userArr=[rootDic objectForKey:@"userList"];
+            
+            for (NSDictionary *dic in userArr) {
+                
+                WCUserObject *user=[WCUserObject userFromDictionary:dic];
+                [user setFriendFlag:[NSNumber numberWithInt:1]];
+                
+                if (![WCUserObject haveSaveUserById:user.userId]) {
+                    [WCUserObject saveNewUser:user];
+                    [_friendsArray addObject:user];
+                }
+                else [WCUserObject updateUser:user];
+            }
+            [_friendTable reloadData];
+            
+            
+            
+        }else
+        {
+            [MMProgressHUD dismissWithError:[rootDic objectForKey:@"msg"] title:@"获取失败" afterDelay:0.75f];
+        }
+        
+    }];
     
-    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_ID ] forKey:@"userId"];
-    [request setDelegate:self];
-    [request setDidFinishSelector:@selector(requestSuccess:)];
-    [request setDidFailSelector:@selector(requestError:)];
+    [request setFailedBlock:^{
+        [MMProgressHUD dismissWithError:@"链接服务器失败！" title:@"获取失败" afterDelay:0.75f];
+    }];
+    
     [request startAsynchronous];
+    
+//    //此API使用方式请查看www.hcios.com:8080/user/findUser.html
+//    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"servlet/GetFriendListServlet")];
+//    
+//    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_ID ] forKey:@"userId"];
+//    [request setDelegate:self];
+//    [request setDidFinishSelector:@selector(requestSuccess:)];
+//    [request setDidFailSelector:@selector(requestError:)];
+//    [request startAsynchronous];
 }
 
 
@@ -83,33 +125,25 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString * identifier=@"friendCell";
-    UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell) {
-        cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifier];
-    }
+    
+    
+    WCFriendCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
+
+    
     WCUserObject *user=_friendsArray[indexPath.row];
-    [cell.textLabel setText:user.userNickname];
-    [cell.detailTextLabel setText:user.userDescription?user.userDescription:@"这个家伙很懒什么都没留下"];
+    [cell.nickName setText:user.userNickname];
+    [cell.description setText:user.userDescription?user.userDescription:@"这个家伙很懒什么都没留下"];
     
     
     
     //加载网络头像
-    [cell.imageView setImage:[UIImage imageNamed:@"3.jpeg"]];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage *img=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:user.userHead]]];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            CATransition *trans=[CATransition animation];
-            [trans setDuration:0.25f];
-            [trans setType:@"flip"];
-            [trans setSubtype:kCATransitionFromLeft];
-            
-            [cell.imageView.layer addAnimation:trans forKey:nil];
-            [cell.imageView setImage:img];
-            
-        });
-    });
-    
+    [cell.userHead setTag:indexPath.row];
+    [cell.userHead setWebImage:FILE_BASE_URL(user.userHead) placeHolder:[UIImage imageNamed:@"mb.png"] downloadFlag:indexPath.row];
     return cell;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 80;
 }
 
 #pragma mark   -------网络请求回调---------

@@ -8,8 +8,8 @@
 
 #import <Foundation/Foundation.h>
 #define kUSER_ID @"userId"
-#define kUSER_NICKNAME @"userNickname"
-#define kUSER_DESCRIPTION @"userDescription"
+#define kUSER_NICKNAME @"nickName"
+#define kUSER_DESCRIPTION @"description"
 #define kUSER_USERHEAD @"userHead"
 #define kUSER_FRIEND_FLAG @"friendFlag"
 

@@ -66,7 +66,9 @@
     if (!cell) {
         cell=[[[WCRecentListCell alloc]initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:identifier]autorelease];
     }
+    
     WCMessageUserUnionObject *unionObject=[_msgArr objectAtIndex:indexPath.row];
+    [cell.userHead setTag:indexPath.row];
     [cell setUnionObject:unionObject];
     return cell;
 }

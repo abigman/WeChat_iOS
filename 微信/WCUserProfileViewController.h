@@ -10,6 +10,10 @@
 
 @interface WCUserProfileViewController : UIViewController
 
+{
+    IBOutlet UIImageView *userHead;
+    IBOutlet UILabel *nickName;
+}
 @property (nonatomic,retain) WCUserObject *thisUser;
 
 - (IBAction)addFirend:(id)sender;

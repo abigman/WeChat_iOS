@@ -7,7 +7,9 @@
 //
 
 #import "WCFindFriendsViewController.h"
+#import "WCFriendCell.h"
 @class WCUserProfileViewController;
+
 
 @interface WCFindFriendsViewController ()
 
@@ -27,11 +29,18 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    //self.navigationItem.prompt=@"上拉列表刷新/下拉列表翻页";
     // Do any additional setup after loading the view from its nib.
     _friendsArray =[[NSMutableArray alloc]init];
     self.navigationItem.title=@"最新注册用户";
     _pageIndex=1;
+    searchKey=@"";
     [self findFriends];
+
+
+    
+    [_friendTable registerNib:[UINib nibWithNibName:@"WCFriendCell" bundle:nil] forCellReuseIdentifier:@"friendCell"];
+    [self.searchDisplayController.searchResultsTableView registerNib:[UINib nibWithNibName:@"WCFriendCell" bundle:nil] forCellReuseIdentifier:@"friendCell"];
 }
 
 - (void)didReceiveMemoryWarning
@@ -43,19 +52,48 @@
 
 -(void)findFriends
 {
-    UIAlertView *av=[[UIAlertView alloc]initWithTitle:@"加载中" message:@"查找最近注册用户中，请稍候" delegate:self cancelButtonTitle:@"ok" otherButtonTitles: nil];
-    [av show];
-    [av release];
     
-    //此API使用方式请查看www.hcios.com:8080/user/findUser.html
-    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"servlet/FindFriendsServlet")];
+    /* 搜索好友接口 */
+    ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"findFriend.do")];
     
-    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_ID ] forKey:@"userId"];
+    [request setPostValue:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_API_KEY ] forKey:@"apiKey"];
     [request setPostValue:[NSNumber numberWithInt:_pageIndex] forKey:@"pageIndex"];
     [request setPostValue:[NSNumber numberWithInt:10] forKey:@"pageSize"];
-    [request setDelegate:self];
-    [request setDidFinishSelector:@selector(requestSuccess:)];
-    [request setDidFailSelector:@selector(requestError:)];
+    [request setPostValue:searchKey forKey:@"nickName"];
+    [MMProgressHUD showWithTitle:@"查找好友" status:@"请求中..." ];
+    [request setCompletionBlock:^{
+        NSLog(@"response:%@",request.responseString);
+        SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
+        NSDictionary *rootDic=[paser objectWithString:request.responseString];
+        int resultCode=[[rootDic objectForKey:@"status"]intValue];
+        if (resultCode==1) {
+            [MMProgressHUD dismissWithSuccess:[rootDic objectForKey:@"msg"] title:@"查找好友成功" afterDelay:0.75f];
+            //保存账号信息
+            NSArray *userArr=[rootDic objectForKey:@"userList"];
+            
+            for (NSDictionary *dic in userArr) {
+                [_friendsArray addObject:dic];
+                WCUserObject *user=[WCUserObject userFromDictionary:dic];
+                if (![WCUserObject haveSaveUserById:user.userId]) {
+                    [WCUserObject saveNewUser:user];
+                }
+            }
+            [_friendTable reloadData];
+            [self.searchDisplayController.searchResultsTableView reloadData];
+            
+            
+            
+        }else
+        {
+           [MMProgressHUD dismissWithError:[rootDic objectForKey:@"msg"] title:@"查找好友失败" afterDelay:0.75f];
+        }
+
+    }];
+    
+    [request setFailedBlock:^{
+        [MMProgressHUD dismissWithError:@"链接服务器失败！" title:@"查找好友失败" afterDelay:0.75f];
+    }];
+
     [request startAsynchronous];
 }
 
@@ -74,78 +112,60 @@
 -(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString * identifier=@"friendCell";
-    UITableViewCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
-    if (!cell) {
-        cell=[[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:identifier]autorelease];
-    }
-    [cell.textLabel setText:[_friendsArray[indexPath.row]objectForKey:@"userNickname"]];
-    [cell.detailTextLabel setText:[_friendsArray[indexPath.row]objectForKey:@"userDescription"]];
+  
     
+    WCFriendCell *cell=[tableView dequeueReusableCellWithIdentifier:identifier];
+   
+    [cell.nickName setText:[_friendsArray[indexPath.row]objectForKey:@"nickName"]];
+    [cell.description setText:[_friendsArray[indexPath.row]objectForKey:@"description"]];
     
+    //网络头像
+    [cell.userHead setTag:indexPath.row];
+    [cell.userHead setWebImage:FILE_BASE_URL([_friendsArray[indexPath.row]objectForKey:@"userHead"]) placeHolder:[UIImage imageNamed:@"mb.png"] downloadFlag:indexPath.row];
     
-    //加载网络头像
-    [cell.imageView setImage:[UIImage imageNamed:@"3.jpeg"]];
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        UIImage *img=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[_friendsArray[indexPath.row]objectForKey:@"userHead"]]]];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            CATransition *trans=[CATransition animation];
-            [trans setDuration:0.25f];
-            [trans setType:@"flip"];
-            [trans setSubtype:kCATransitionFromLeft];
-            
-            [cell.imageView.layer addAnimation:trans forKey:nil];
-            [cell.imageView setImage:img];
-            
-        });
-    });
 
     return cell;
 }
 
-#pragma mark   -------网络请求回调---------
 
--(void)requestSuccess:(ASIFormDataRequest*)request
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"response:%@",request.responseString);
-    SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
-    NSDictionary *rootDic=[paser objectWithString:request.responseString];
-    int resultCode=[[rootDic objectForKey:@"result_code"]intValue];
-    if (resultCode==1) {
-        NSLog(@"查找成功");
-        //保存账号信息
-        //改返回的JSON数据格式请到 www.hcios.com:8080/user下查看
-        NSArray *userArr=[rootDic objectForKey:@"users"];
-        
-        for (NSDictionary *dic in userArr) {
-            [_friendsArray addObject:dic];
-            WCUserObject *user=[WCUserObject userFromDictionary:dic];
-            if (![WCUserObject haveSaveUserById:user.userId]) {
-                [WCUserObject saveNewUser:user];
-            }
-        }
-    [_friendTable reloadData];
-
-        
-            
+    return 80;
+}
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (scrollView.contentOffset.y<-50&&scrollView.contentOffset.y>-100)
+    {
+        [refreshView setHidden:NO];
+        [refreshView setTransform:CGAffineTransformMakeRotation(scrollView.contentOffset.y/10)];
     }else
     {
-        NSLog(@"查找好友失败,原因:%@",[rootDic objectForKey:@"msg"]);
+        //[refreshView setHidden:YES];
     }
-
 }
-
 
 -(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
 {
+    
+    
     if (scrollView.contentOffset.y<-100) {
+        
+        [UIView animateWithDuration:2.0 animations:^{
+            [refreshView.layer setTransform:CATransform3DMakeRotation(-100*M_PI, 0, 0, 1)];
+        } completion:^(BOOL finished) {
+            [refreshView setHidden:YES];
+        }];
         _pageIndex=1;
         [_friendsArray removeAllObjects];
         [_friendTable reloadData];
+        [self.searchDisplayController.searchResultsTableView reloadData];
         [self findFriends];
     }
     if (scrollView.contentOffset.y>(scrollView.contentSize.height-scrollView.frame.size.height+100)) {
         _pageIndex++;
         [self findFriends];
+        [self.searchDisplayController.searchResultsTableView reloadData];
     }
 }
 
@@ -160,6 +180,7 @@
     [_friendTable release];
     [findView release];
     [web release];
+
     [super dealloc];
     [_friendsArray release];
 }
@@ -171,8 +192,8 @@
     WCUserObject *user=[[[WCUserObject alloc]init]autorelease];
     NSDictionary *dic=_friendsArray[indexPath.row];
     [user setUserId:[dic objectForKey:@"userId"]];
-    [user setUserNickname:[dic objectForKey:@"userNickname"]];
-    [user setUserDescription:[dic objectForKey:@"userDescription"]];
+    [user setUserNickname:[dic objectForKey:@"nickName"]];
+    [user setUserDescription:[dic objectForKey:@"description"]];
     [user setUserHead:[dic objectForKey:@"userHead"]];
     
     
@@ -198,4 +219,37 @@
     [web goBack];
     
 }
+
+
+
+
+#pragma mark   搜索
+
+- (BOOL)searchDisplayController:(UISearchDisplayController *)controller shouldReloadTableForSearchString:(NSString *)searchString;
+{
+
+    return NO;
+}
+
+
+
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *) searchBar
+{
+    searchKey=@"";
+    _pageIndex=1;
+    [_friendsArray removeAllObjects];
+    [self findFriends];
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+    searchKey=searchBar.text;
+    _pageIndex=1;
+    [_friendsArray removeAllObjects];
+    [self findFriends];
+}
+
+
+
 @end

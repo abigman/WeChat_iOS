@@ -27,6 +27,8 @@
     [nav setNavigationBarHidden:YES];
     self.window.rootViewController = nav;
     [self.window makeKeyAndVisible];
+    [MMProgressHUD setDisplayStyle:MMProgressHUDDisplayStylePlain];
+    [MMProgressHUD setPresentationStyle:MMProgressHUDPresentationStyleFade];
     return YES;
 }
 

@@ -15,7 +15,7 @@
     NSMutableArray *msgRecords;
     IBOutlet UITextField *messageText;
     IBOutlet UIView *inputBar;
-    UIImage *_myHeadImage,*_userHeadImage;
+    //UIImage *_myHeadImage,*_userHeadImage;
     WCChatSelectionView *_shareMoreView;
 }
 - (IBAction)sendIt:(id)sender;

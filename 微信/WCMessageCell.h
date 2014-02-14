@@ -26,6 +26,6 @@
 @property (nonatomic) enum kWCMessageCellStyle msgStyle;
 @property (nonatomic) int height;
 -(void)setMessageObject:(WCMessageObject*)aMessage;
--(void)setHeadImage:(UIImage*)headImage;
--(void)setChatImage:(UIImage *)chatImage;
+-(void)setHeadImage:(NSURL*)headImage tag:(int)aTag;
+-(void)setChatImage:(NSURL *)chatImage tag:(int)aTag;
 @end

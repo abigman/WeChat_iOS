@@ -5,6 +5,7 @@
 #import <Availability.h>
 //用户信息
 #define kMY_USER_ID @"myUserId"
+#define kMY_API_KEY @"myApiKey"
 #define kMY_USER_PASSWORD @"myUserPassword"
 #define kMY_USER_NICKNAME @"myUserNickname"
 #define kMY_USER_Head @"myUserHead"
@@ -21,7 +22,9 @@
 
 
 //API路径
-#define API_BASE_URL(_URL_) [NSURL URLWithString:[@"http://www.hcios.com:8080/" stringByAppendingString:_URL_]]
+#define API_BASE_URL(_URL_) [NSURL URLWithString:[@"http://115.29.150.153/api/" stringByAppendingString:_URL_]]
+#define FILE_BASE_URL(_FILE_) [NSURL URLWithString:[@"http://115.29.150.153/" stringByAppendingString:_FILE_]]
+
 
 #ifndef __IPHONE_4_0
 #warning "This project uses features only available in iOS SDK 4.0 and later."
@@ -33,9 +36,12 @@
 #import <QuartzCore/QuartzCore.h>
 #import "ASIFormDataRequest.h"
 #import "SBJsonParser.h"
+#import "SBJson.h"
 #import "WCXMPPManager.h"
 #import "WCMessageObject.h"
 #import "WCUserObject.h"
 #import "WCMessageUserUnionObject.h"
 #import "Photo.h"
+#import "MMProgressHUD.h"
+#import "UIImageView+RZWebImage.h"
 #endif

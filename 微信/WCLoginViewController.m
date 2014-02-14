@@ -44,7 +44,8 @@
         
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-            UIImage *img=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_Head]]]];
+            UIImage *img=[UIImage imageWithData:[NSData dataWithContentsOfURL:FILE_BASE_URL([[NSUserDefaults standardUserDefaults]objectForKey:kMY_USER_Head]])
+];
             dispatch_async(dispatch_get_main_queue(), ^{
                 CATransition *trans=[CATransition animation];
                 [trans setDuration:0.25f];
@@ -133,60 +134,48 @@
 
 
 - (IBAction)startLogin:(id)sender {
-        ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:[NSURL URLWithString:@"http://www.hcios.com:8080/HCAPI2/servlet/LoginServlet"]];
-        [request setPostValue:_userLoginName.text forKey:@"userName"];
-        [request setPostValue:_userPassword.text forKey:@"userPassword"];
+        ASIFormDataRequest *request=[ASIFormDataRequest requestWithURL:API_BASE_URL(@"login.do")];
+        [request setPostValue:_userLoginName.text forKey:@"mobile"];
+        [request setPostValue:_userPassword.text forKey:@"uPass"];
         [request setPostValue:[NSString stringWithFormat:@"WeChat-V%@",[[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleVersion"]] forKey:@"versionInfo"];
-    [request setPostValue:[[[UIDevice currentDevice]systemName]stringByAppendingString:[[UIDevice currentDevice]systemVersion]] forKey:@"deviceInfo"];
-        [request setDelegate:self];
-        [request setDidFinishSelector:@selector(requestSuccess:)];
-        [request setDidFailSelector:@selector(requestError:)];
+        [request setPostValue:[[[UIDevice currentDevice]systemName]stringByAppendingString:[[UIDevice currentDevice]systemVersion]] forKey:@"deviceInfo"];
+        [MMProgressHUD showWithTitle:@"开始登陆" status:@"登陆中..." ];
+        [request setCompletionBlock:^{
+            SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
+            NSLog(@"%@",request.responseString);
+            NSDictionary *rootDic=[paser objectWithString:request.responseString];
+            int status=[[rootDic objectForKey:@"status"]intValue];
+            if (status==1) {
+                [MMProgressHUD dismissWithSuccess:[rootDic objectForKey:@"msg"] title:@"登陆成功" afterDelay:0.75f];
+                NSDictionary *userDic=[rootDic objectForKey:@"userInfo"];
+                [[NSUserDefaults standardUserDefaults]setObject:[rootDic objectForKey:@"apiKey"] forKey:kMY_API_KEY];
+                [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userId"] forKey:kMY_USER_ID];
+                [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userHead"] forKey:kMY_USER_Head];
+                [[NSUserDefaults standardUserDefaults]setObject:_userLoginName.text forKey:kMY_USER_LoginName];
+                [[NSUserDefaults standardUserDefaults]setObject:_userPassword.text forKey:kMY_USER_PASSWORD];
+                [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userNickname"] forKey:kMY_USER_NICKNAME];
+                //立刻保存信息
+                [[NSUserDefaults standardUserDefaults]synchronize];
+                
+                //进入主菜单
+                [self.navigationController presentViewController:mainTab animated:YES completion:Nil];
+            }
+            else{
+                [MMProgressHUD dismissWithError:[rootDic objectForKey:@"msg"] title:@"登陆失败" afterDelay:0.75f];
+            }
+    
+        }];
+    
+    
+        [request setFailedBlock:^{
+            [MMProgressHUD dismissWithError:@"链接服务器失败！" title:@"登陆失败" afterDelay:0.75f];
+        }];
         [request startAsynchronous];
 
 }
 
 
 
-
-
-#pragma mark  -------网络请求回调----------
--(void)requestSuccess:(ASIFormDataRequest*)request
-{
-    NSLog(@"response:%@",request.responseString);
-    SBJsonParser *paser=[[[SBJsonParser alloc]init]autorelease];
-    NSDictionary *rootDic=[paser objectWithString:request.responseString];
-    int resultCode=[[rootDic objectForKey:@"result_code"]intValue];
-    if (resultCode==1) {
-        NSLog(@"登陆成功");
-        //保存账号信息
-        //改返回的JSON数据格式请到 www.hcios.com:8080/user下查看
-        NSDictionary *userDic=[rootDic objectForKey:@"data"];
-        
-        [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userId"] forKey:kMY_USER_ID];
-        [[NSUserDefaults standardUserDefaults]setObject:_userPassword.text forKey:kMY_USER_PASSWORD];
-        [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userNickname"] forKey:kMY_USER_NICKNAME];
-        [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userHead"] forKey:kMY_USER_Head];
-        //立刻保存信息
-        [[NSUserDefaults standardUserDefaults]synchronize];
-        
-        
-        
-        //进入主菜单
-        [self.navigationController presentViewController:mainTab animated:YES completion:Nil];
-        
-    }else
-    {
-        UIAlertView *av=[[UIAlertView alloc]initWithTitle:@"登陆失败" message:[rootDic objectForKey:@"msg"] delegate:nil cancelButtonTitle:@"ok" otherButtonTitles: nil];
-        [av show];
-        [av release];
-    }
-}
-
-#pragma mark  -------请求错误--------
-- (void)requestError:(ASIFormDataRequest*)request
-{
-    NSLog(@"请求失败");
-}
 
 
 
