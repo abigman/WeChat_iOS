@@ -82,8 +82,8 @@
         return NO;
     };
     [WCUserObject checkTableCreatedInDb:db];
-    BOOL worked=[db executeUpdate:@"update wcUser set friendFlag=1 where userId=?",newUser.userId];
-    
+    BOOL worked=[db executeUpdate:@"update wcUser set friendFlag=?, userHead=? ,nickName=? ,description=? where userId=?",newUser.friendFlag,newUser.userHead,newUser.userNickname,newUser.userDescription,newUser.userId];
+    [db close];
     return worked;
 
 }
@@ -110,6 +110,7 @@
         [resultArr addObject:user];
     }
     [rs close];
+    [db close];
     return resultArr;
     
 }

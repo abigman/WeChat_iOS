@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none">
     <dependencies>
-        <deployment defaultVersion="1536" identifier="iOS"/>
+        <deployment defaultVersion="1792" identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <objects>
@@ -14,6 +14,7 @@
                 <outlet property="_userPassword" destination="11" id="21"/>
                 <outlet property="mainTab" destination="29" id="39"/>
                 <outlet property="modifiedLoginName" destination="64" id="65"/>
+                <outlet property="myProfile" destination="Mff-ya-q3Y" id="Qlq-9o-LgB"/>
                 <outlet property="view" destination="1" id="3"/>
             </connections>
         </placeholder>
@@ -135,11 +136,11 @@
             <extendedEdge key="edgesForExtendedLayout"/>
             <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
             <nil key="simulatedTopBarMetrics"/>
-            <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+            <nil key="simulatedBottomBarMetrics"/>
             <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
             <nil key="simulatedDestinationMetrics"/>
             <tabBar key="tabBar" contentMode="scaleToFill" id="34">
-                <rect key="frame" x="0.0" y="519" width="320" height="49"/>
+                <rect key="frame" x="0.0" y="431" width="320" height="49"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             </tabBar>
@@ -216,15 +217,27 @@
                         </viewController>
                     </viewControllers>
                 </navigationController>
-                <viewController id="30">
-                    <extendedEdge key="edgesForExtendedLayout"/>
-                    <tabBarItem key="tabBarItem" title="我" image="tabbar_me.png" id="38"/>
-                    <nil key="simulatedStatusBarMetrics"/>
+                <navigationController definesPresentationContext="YES" id="skm-Ug-lj4">
+                    <tabBarItem key="tabBarItem" title="我" image="tabbar_me.png" badgeValue="new" id="a8B-7n-3pq"/>
+                    <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
                     <nil key="simulatedDestinationMetrics"/>
-                </viewController>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="UyZ-CF-3fB">
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <viewControllers>
+                        <viewController id="Mff-ya-q3Y" customClass="WCUserProfileViewController">
+                            <navigationItem key="navigationItem" title="Root View Controller" id="KmC-fE-KmD"/>
+                            <nil key="simulatedStatusBarMetrics"/>
+                            <nil key="simulatedTopBarMetrics"/>
+                            <nil key="simulatedBottomBarMetrics"/>
+                            <simulatedOrientationMetrics key="simulatedOrientationMetrics"/>
+                            <nil key="simulatedDestinationMetrics"/>
+                        </viewController>
+                    </viewControllers>
+                </navigationController>
             </viewControllers>
         </tabBarController>
     </objects>

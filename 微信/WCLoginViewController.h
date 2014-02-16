@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "WCUserProfileViewController.h"
 @interface WCLoginViewController : UIViewController
 {
     IBOutlet UIImageView *_userHead;
@@ -17,6 +17,7 @@
     IBOutlet UIButton *_registerButton;
     IBOutlet UINavigationController *mainTab;
     IBOutlet UITextField *modifiedLoginName;
+    IBOutlet WCUserProfileViewController *myProfile;
     
 }
 - (IBAction)registerAccount:(id)sender;

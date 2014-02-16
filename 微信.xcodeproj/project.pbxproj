@@ -241,6 +241,12 @@
 		84818F6D17BD4CCA00BFBA00 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84818F6B17BD4CCA00BFBA00 /* Default@2x.png */; };
 		84818F6F17BD4CE000BFBA00 /* bottleWritingArrow@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 84818F6E17BD4CE000BFBA00 /* bottleWritingArrow@2x.png */; };
 		84818F7117BD4FC200BFBA00 /* retina_1.jpeg in Resources */ = {isa = PBXBuildFile; fileRef = 84818F7017BD4FC200BFBA00 /* retina_1.jpeg */; };
+		848FB6B418B13CB9000EF605 /* WCModifyProfileViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 848FB6B218B13CB9000EF605 /* WCModifyProfileViewController.m */; };
+		848FB6B518B13CB9000EF605 /* WCModifyProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848FB6B318B13CB9000EF605 /* WCModifyProfileViewController.xib */; };
+		848FB6B918B14375000EF605 /* WCModDescViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 848FB6B718B14375000EF605 /* WCModDescViewController.m */; };
+		848FB6BA18B14375000EF605 /* WCModDescViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848FB6B818B14375000EF605 /* WCModDescViewController.xib */; };
+		848FB6BE18B154C5000EF605 /* WCModNicknameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 848FB6BC18B154C5000EF605 /* WCModNicknameViewController.m */; };
+		848FB6BF18B154C5000EF605 /* WCModNicknameViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 848FB6BD18B154C5000EF605 /* WCModNicknameViewController.xib */; };
 		84968EC117B6C8DC00DC845F /* WCSendMessageController.m in Sources */ = {isa = PBXBuildFile; fileRef = 84968EBF17B6C8DC00DC845F /* WCSendMessageController.m */; };
 		84968EC217B6C8DC00DC845F /* WCSendMessageController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 84968EC017B6C8DC00DC845F /* WCSendMessageController.xib */; };
 		8499FA1A17B6B0FC00D2200F /* WCFindFriendsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8499FA1817B6B0FC00D2200F /* WCFindFriendsViewController.m */; };
@@ -678,6 +684,15 @@
 		84818F6B17BD4CCA00BFBA00 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
 		84818F6E17BD4CE000BFBA00 /* bottleWritingArrow@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bottleWritingArrow@2x.png"; sourceTree = "<group>"; };
 		84818F7017BD4FC200BFBA00 /* retina_1.jpeg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = retina_1.jpeg; sourceTree = "<group>"; };
+		848FB6B118B13CB9000EF605 /* WCModifyProfileViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCModifyProfileViewController.h; sourceTree = "<group>"; };
+		848FB6B218B13CB9000EF605 /* WCModifyProfileViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCModifyProfileViewController.m; sourceTree = "<group>"; };
+		848FB6B318B13CB9000EF605 /* WCModifyProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WCModifyProfileViewController.xib; sourceTree = "<group>"; };
+		848FB6B618B14375000EF605 /* WCModDescViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCModDescViewController.h; sourceTree = "<group>"; };
+		848FB6B718B14375000EF605 /* WCModDescViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCModDescViewController.m; sourceTree = "<group>"; };
+		848FB6B818B14375000EF605 /* WCModDescViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WCModDescViewController.xib; sourceTree = "<group>"; };
+		848FB6BB18B154C5000EF605 /* WCModNicknameViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCModNicknameViewController.h; sourceTree = "<group>"; };
+		848FB6BC18B154C5000EF605 /* WCModNicknameViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCModNicknameViewController.m; sourceTree = "<group>"; };
+		848FB6BD18B154C5000EF605 /* WCModNicknameViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WCModNicknameViewController.xib; sourceTree = "<group>"; };
 		84968EBE17B6C8DC00DC845F /* WCSendMessageController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WCSendMessageController.h; sourceTree = "<group>"; };
 		84968EBF17B6C8DC00DC845F /* WCSendMessageController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WCSendMessageController.m; sourceTree = "<group>"; };
 		84968EC017B6C8DC00DC845F /* WCSendMessageController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WCSendMessageController.xib; sourceTree = "<group>"; };
@@ -824,6 +839,7 @@
 				8433677917C64FE800E0408A /* AddtionViews */,
 				840906EC17B6955600F5C28D /* Login&Reg */,
 				8472A9B017B6965200129DBB /* Messages */,
+				848FB6B018B1344B000EF605 /* Profiles */,
 				8499FA1617B6B0DD00D2200F /* Friends */,
 				843E5F5917B6C1940001A37B /* Model */,
 				84818F4D17BD035A00BFBA00 /* CustomCell */,
@@ -1698,6 +1714,22 @@
 			name = CustomCell;
 			sourceTree = "<group>";
 		};
+		848FB6B018B1344B000EF605 /* Profiles */ = {
+			isa = PBXGroup;
+			children = (
+				848FB6B118B13CB9000EF605 /* WCModifyProfileViewController.h */,
+				848FB6B218B13CB9000EF605 /* WCModifyProfileViewController.m */,
+				848FB6B318B13CB9000EF605 /* WCModifyProfileViewController.xib */,
+				848FB6BB18B154C5000EF605 /* WCModNicknameViewController.h */,
+				848FB6BC18B154C5000EF605 /* WCModNicknameViewController.m */,
+				848FB6BD18B154C5000EF605 /* WCModNicknameViewController.xib */,
+				848FB6B618B14375000EF605 /* WCModDescViewController.h */,
+				848FB6B718B14375000EF605 /* WCModDescViewController.m */,
+				848FB6B818B14375000EF605 /* WCModDescViewController.xib */,
+			);
+			name = Profiles;
+			sourceTree = "<group>";
+		};
 		8499FA1617B6B0DD00D2200F /* Friends */ = {
 			isa = PBXGroup;
 			children = (
@@ -1848,6 +1880,7 @@
 				84C2D00818AE915700D3CF69 /* RZImageDisplay.xib in Resources */,
 				8472A9D917B6968300129DBB /* tabbar_contacts@2x.png in Resources */,
 				8472A9DA17B6968300129DBB /* tabbar_contactsHL@2x.png in Resources */,
+				848FB6BF18B154C5000EF605 /* WCModNicknameViewController.xib in Resources */,
 				8472A9DB17B6968300129DBB /* tabbar_discover.png in Resources */,
 				8472A9DC17B6968300129DBB /* tabbar_discover@2x.png in Resources */,
 				8472A9DD17B6968300129DBB /* tabbar_discoverHL.png in Resources */,
@@ -1879,6 +1912,7 @@
 				84818F5E17BD1ED700BFBA00 /* VOIPSenderVoiceNodeBkg@2x.png in Resources */,
 				84818F5F17BD1ED700BFBA00 /* VOIPSenderVoiceNodeBkgHL@2x.png in Resources */,
 				84818F6117BD1EF600BFBA00 /* UserHeaderImageBox@2x.png in Resources */,
+				848FB6B518B13CB9000EF605 /* WCModifyProfileViewController.xib in Resources */,
 				84C2D02318AEA09900D3CF69 /* grayArrow@2x.png in Resources */,
 				84818F6417BD36E200BFBA00 /* SenderTextNodeBkg@2x.png in Resources */,
 				84818F6517BD36E200BFBA00 /* SenderTextNodeBkgHL@2x.png in Resources */,
@@ -1918,6 +1952,7 @@
 				8433678A17C6527500E0408A /* sharemore_wxtalk@2x.png in Resources */,
 				84C2D01F18AEA09900D3CF69 /* blackArrow@2x.png in Resources */,
 				8433678C17C6527900E0408A /* sharemoreAdd@2x.png in Resources */,
+				848FB6BA18B14375000EF605 /* WCModDescViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1964,6 +1999,7 @@
 				8437D78117B6AC760040BB79 /* XMPPDeprecatedPlainAuthentication.m in Sources */,
 				8437D78217B6AC760040BB79 /* XMPPDigestMD5Authentication.m in Sources */,
 				8437D78317B6AC760040BB79 /* XMPPPlainAuthentication.m in Sources */,
+				848FB6B418B13CB9000EF605 /* WCModifyProfileViewController.m in Sources */,
 				8437D78417B6AC760040BB79 /* XMPPXFacebookPlatformAuthentication.m in Sources */,
 				8437D83517B6ACD80040BB79 /* XMPPBandwidthMonitor.m in Sources */,
 				8437D83617B6ACD80040BB79 /* XMPPCoreDataStorage.m in Sources */,
@@ -2014,10 +2050,12 @@
 				8437D85D17B6ACD80040BB79 /* XMPPvCardTempEmail.m in Sources */,
 				84C2D01418AEA09000D3CF69 /* MessageInterceptor.m in Sources */,
 				8437D85E17B6ACD80040BB79 /* XMPPvCardTempLabel.m in Sources */,
+				848FB6BE18B154C5000EF605 /* WCModNicknameViewController.m in Sources */,
 				8437D85F17B6ACD80040BB79 /* XMPPvCardTempModule.m in Sources */,
 				8437D86017B6ACD80040BB79 /* XMPPvCardTempTel.m in Sources */,
 				8437D86117B6ACD80040BB79 /* XMPPPubSub.m in Sources */,
 				8437D86217B6ACD80040BB79 /* TURNSocket.m in Sources */,
+				848FB6B918B14375000EF605 /* WCModDescViewController.m in Sources */,
 				84C2CFCD18AE6CA600D3CF69 /* MMVectorImage.m in Sources */,
 				8437D86317B6ACD80040BB79 /* NSDate+XMPPDateTimeProfiles.m in Sources */,
 				8437D86417B6ACD80040BB79 /* XMPPDateTimeProfiles.m in Sources */,
@@ -2181,7 +2219,7 @@
 				GCC_PREFIX_HEADER = "微信/微信-Prefix.pch";
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = "微信/微信-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/微信/Vendor/libidn\"",
@@ -2201,7 +2239,7 @@
 				GCC_PREFIX_HEADER = "微信/微信-Prefix.pch";
 				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = "微信/微信-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/微信/Vendor/libidn\"",

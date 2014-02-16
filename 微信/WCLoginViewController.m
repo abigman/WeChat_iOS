@@ -108,6 +108,7 @@
     [_registerButton release];
     [mainTab release];
     [modifiedLoginName release];
+    [myProfile release];
     [super dealloc];
 }
 
@@ -151,11 +152,26 @@
                 [[NSUserDefaults standardUserDefaults]setObject:[rootDic objectForKey:@"apiKey"] forKey:kMY_API_KEY];
                 [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userId"] forKey:kMY_USER_ID];
                 [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userHead"] forKey:kMY_USER_Head];
+                [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"nickName"] forKey:kMY_USER_NICKNAME];
+                [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"description"] forKey:kMY_USER_DESC];
                 [[NSUserDefaults standardUserDefaults]setObject:_userLoginName.text forKey:kMY_USER_LoginName];
                 [[NSUserDefaults standardUserDefaults]setObject:_userPassword.text forKey:kMY_USER_PASSWORD];
-                [[NSUserDefaults standardUserDefaults]setObject:[userDic objectForKey:@"userNickname"] forKey:kMY_USER_NICKNAME];
                 //立刻保存信息
                 [[NSUserDefaults standardUserDefaults]synchronize];
+                
+                //更新我的信息
+                
+                WCUserObject *user=[[[WCUserObject alloc]init]autorelease];
+                [user setUserId:[userDic objectForKey:@"userId"]];
+                [user setUserNickname:[userDic objectForKey:@"nickName"]];
+                [user setUserDescription:[userDic objectForKey:@"description"]];
+                [user setUserHead:[userDic objectForKey:@"userHead"]];
+                
+                [myProfile setTitle:@"我"];
+                
+                [myProfile setThisUser:user];
+                
+               // [myProfile setHidesBottomBarWhenPushed:YES];
                 
                 //进入主菜单
                 [self.navigationController presentViewController:mainTab animated:YES completion:Nil];
@@ -185,4 +201,5 @@
     }];
 }
 
+                        
 @end

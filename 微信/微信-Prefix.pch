@@ -7,6 +7,7 @@
 #define kMY_USER_ID @"myUserId"
 #define kMY_API_KEY @"myApiKey"
 #define kMY_USER_PASSWORD @"myUserPassword"
+#define kMY_USER_DESC @"myUserDescription"
 #define kMY_USER_NICKNAME @"myUserNickname"
 #define kMY_USER_Head @"myUserHead"
 #define kMY_USER_LoginName @"myUserLoginName"

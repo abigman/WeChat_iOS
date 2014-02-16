@@ -13,10 +13,16 @@
 {
     IBOutlet UIImageView *userHead;
     IBOutlet UILabel *nickName;
+    IBOutlet UILabel *descLabel;
+    IBOutlet UILabel *sexLabel;
+    IBOutlet UILabel *areaLabel;
+    IBOutlet UILabel *tencentWeibo;
+    IBOutlet UILabel *regDate;
 }
 @property (nonatomic,retain) WCUserObject *thisUser;
 
 - (IBAction)addFirend:(id)sender;
 - (IBAction)deleteFriend:(id)sender;
+- (IBAction)chatFirned:(id)sender;
 
 @end

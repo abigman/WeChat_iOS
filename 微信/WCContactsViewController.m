@@ -7,7 +7,7 @@
 //
 
 #import "WCContactsViewController.h"
-#import "WCSendMessageController.h"
+#import "WCUserProfileViewController.h"
 #import "WCFriendCell.h"
 
 @interface WCContactsViewController ()
@@ -190,14 +190,30 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    WCSendMessageController *sendView=[[[WCSendMessageController alloc]init]autorelease];
-    WCUserObject *user=_friendsArray[indexPath.row];
+    WCUserProfileViewController *profileView=[[[WCUserProfileViewController alloc]init]autorelease];
+//    WCUserObject *user=[[[WCUserObject alloc]init]autorelease];
+//    NSDictionary *dic=_friendsArray[indexPath.row];
+//    [user setUserId:[dic objectForKey:@"userId"]];
+//    [user setUserNickname:[dic objectForKey:@"nickName"]];
+//    [user setUserDescription:[dic objectForKey:@"description"]];
+//    [user setUserHead:[dic objectForKey:@"userHead"]];
+    
+    
+    
+    [profileView setThisUser:_friendsArray[indexPath.row]];
+    
+    [profileView setHidesBottomBarWhenPushed:YES];
+    [self.navigationController pushViewController:profileView animated:YES];
 
     
-    
-    [sendView setChatPerson:user];
-    [sendView setHidesBottomBarWhenPushed:YES];
-    [self.navigationController pushViewController:sendView animated:YES];
+//    WCSendMessageController *sendView=[[[WCSendMessageController alloc]init]autorelease];
+//    WCUserObject *user=_friendsArray[indexPath.row];
+//
+//    
+//    
+//    [sendView setChatPerson:user];
+//    [sendView setHidesBottomBarWhenPushed:YES];
+//    [self.navigationController pushViewController:sendView animated:YES];
 }
 
 - (void)dealloc {

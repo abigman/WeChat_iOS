@@ -199,9 +199,10 @@
     
     
     [profileView setThisUser:user];
-    [WCUserObject updateUser:user];
+    
     [profileView setHidesBottomBarWhenPushed:YES];
     [self.navigationController pushViewController:profileView animated:YES];
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 - (IBAction)searchUser:(id)sender {
